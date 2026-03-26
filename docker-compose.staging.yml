@@ -1,0 +1,20 @@
+services:
+  landing:
+    image: ghcr.io/soy-chrislo/ciibague-landing:staging-latest
+    ports:
+      - '3017:4321'
+    environment:
+      PUBLIC_BACKEND_URL: https://staging-api.contactoinmobiliarioibague.com
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', 'http://localhost:4321/']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+    networks:
+      - apps-network
+
+networks:
+  apps-network:
+    external: true
