@@ -10,7 +10,6 @@ import { defineConfig } from 'astro/config';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://main.contactoinmobiliarioibague.com',
-  output: 'server',
   adapter: node({ mode: 'standalone' }),
   integrations: [react(), tailwind({ applyBaseStyles: false }), sitemap()],
 });
