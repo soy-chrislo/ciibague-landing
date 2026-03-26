@@ -40,8 +40,32 @@ export default function PropertyView({ property }: PropertyViewProps) {
       ? { latitude: property.lat, longitude: property.lng }
       : { latitude: 4.444078700336001, longitude: -75.23468133604176 };
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href).catch(() => {});
+  const handleShare = async () => {
+    const url = window.location.href;
+    const title = `${propertyTypeLabel} en ${property.address}`;
+
+    // Mobile: use Web Share API if available
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, url });
+        return;
+      } catch {
+        // User cancelled or error — fall through to clipboard
+      }
+    }
+
+    // Desktop: copy to clipboard with feedback
+    try {
+      await navigator.clipboard.writeText(url);
+      const btn = document.getElementById('share-btn');
+      if (btn) {
+        const original = btn.innerHTML;
+        btn.innerHTML = '<span class="text-green-600 text-xs font-medium">Enlace copiado!</span>';
+        setTimeout(() => { btn.innerHTML = original; }, 2000);
+      }
+    } catch {
+      // Fallback
+    }
   };
 
   const propertyTypeLabel = property.propertyType
@@ -72,9 +96,10 @@ export default function PropertyView({ property }: PropertyViewProps) {
             <PropertyStatus status={property.available} />
             <button
               type="button"
-              onClick={handleCopyLink}
+              id="share-btn"
+              onClick={handleShare}
               className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-orange-500 transition-colors cursor-pointer"
-              aria-label="Copiar enlace"
+              aria-label="Compartir"
             >
               <svg
                 width="18"
