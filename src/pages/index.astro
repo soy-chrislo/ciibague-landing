@@ -1,7 +1,12 @@
 ---
 import Footer from '../components/Footer.astro';
-import Navbar from '../components/Navbar.astro';
+import Hero from '../components/Hero.astro';
+import OfficesCard from '../components/OfficesCard.astro';
 import PropertyCard from '../components/PropertyCard.astro';
+import ServicesSection from '../components/ServicesSection.astro';
+import TenYearsBadge from '../components/TenYearsBadge.astro';
+import MarkedMap from '../islands/MarkedMap';
+import SeasonalDecorations from '../islands/SeasonalDecorations';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { fetchApi } from '../lib/api';
 import type { PaginatedPropertiesResponse, Property } from '../types';
@@ -17,33 +22,38 @@ try {
 } catch (e) {
   console.error('Error fetching properties:', e);
 }
+
+const officeLocation: [number, number] = [4.443912384127027, -75.23470736977413];
 ---
 
 <BaseLayout
   title="Inicio"
   description="Encuentra casas, apartamentos, lotes y más para arriendo o venta en Ibagué."
 >
-  <Navbar slot="navbar" />
+  <!-- Hero header with background image — contains Navbar -->
+  <Hero slot="navbar" />
 
-  <section class="bg-gray-900 text-white py-16 px-6 text-center">
-    <h1 class="text-4xl font-bold mb-4">Contacto Inmobiliario Ibagué</h1>
-    <p class="text-lg text-gray-300 max-w-2xl mx-auto">
-      Tu agencia inmobiliaria de confianza en Ibagué. Más de 10 años ayudándote a encontrar el
-      hogar ideal.
-    </p>
-  </section>
+  <!-- 10 Years Anniversary badge overlapping hero -->
+  <TenYearsBadge />
 
+  <!-- Properties in Arriendo -->
   {
     rentProperties.length > 0 && (
-      <section class="max-w-7xl mx-auto px-4 py-8">
+      <section class="max-w-full mx-4 sm:mx-6 lg:mx-8 my-5">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-2xl font-bold">Inmuebles en Arriendo</h2>
-          <a href="/mapa/rent" class="text-orange-500 hover:text-orange-600 font-medium text-sm">
-            Ver todos →
+          <h2 class="font-semibold text-lg lg:text-2xl">Inmuebles en Arriendo</h2>
+          <a href="/mapa/rent">
+            <button
+              type="button"
+              class="lg:hidden text-white px-4 py-1.5 rounded text-sm font-medium transition-colors"
+              style="background-color: #EE6910;"
+            >
+              Ver mapa
+            </button>
           </a>
         </div>
-        <div class="flex gap-4 overflow-x-auto pb-4 snap-x">
-          {rentProperties.slice(0, 10).map((p) => (
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {rentProperties.slice(0, 12).map((p) => (
             <PropertyCard
               propertyId={p.id}
               imageSrc={p.photos?.[0]}
@@ -56,22 +66,38 @@ try {
               propertyType={p.propertyType}
             />
           ))}
+        </div>
+        <div class="hidden lg:flex justify-center mt-4">
+          <a
+            href="/mapa/rent"
+            class="inline-flex items-center justify-center px-6 py-2 rounded-lg font-semibold text-white text-sm transition-all hover:opacity-90"
+            style="background-color: #EE6910;"
+          >
+            Ver todos en mapa →
+          </a>
         </div>
       </section>
     )
   }
 
+  <!-- Properties in Venta -->
   {
     saleProperties.length > 0 && (
-      <section class="max-w-7xl mx-auto px-4 py-8">
+      <section class="max-w-full mx-4 sm:mx-6 lg:mx-8 my-5">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-2xl font-bold">Inmuebles en Venta</h2>
-          <a href="/mapa/sale" class="text-orange-500 hover:text-orange-600 font-medium text-sm">
-            Ver todos →
+          <h2 class="font-semibold text-lg lg:text-2xl">Inmuebles en Venta</h2>
+          <a href="/mapa/sale">
+            <button
+              type="button"
+              class="lg:hidden text-white px-4 py-1.5 rounded text-sm font-medium transition-colors"
+              style="background-color: #EE6910;"
+            >
+              Ver mapa
+            </button>
           </a>
         </div>
-        <div class="flex gap-4 overflow-x-auto pb-4 snap-x">
-          {saleProperties.slice(0, 10).map((p) => (
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {saleProperties.slice(0, 12).map((p) => (
             <PropertyCard
               propertyId={p.id}
               imageSrc={p.photos?.[0]}
@@ -85,9 +111,38 @@ try {
             />
           ))}
         </div>
+        <div class="hidden lg:flex justify-center mt-4">
+          <a
+            href="/mapa/sale"
+            class="inline-flex items-center justify-center px-6 py-2 rounded-lg font-semibold text-white text-sm transition-all hover:opacity-90"
+            style="background-color: #EE6910;"
+          >
+            Ver todos en mapa →
+          </a>
+        </div>
       </section>
     )
   }
+
+  <!-- Services Section -->
+  <ServicesSection />
+
+  <!-- Offices + Map Section -->
+  <section class="px-4 sm:px-6 lg:px-8 py-8 mb-10">
+    <div class="max-w-5xl mx-auto flex flex-col lg:flex-row gap-6 items-start">
+      <OfficesCard />
+      <div class="flex-1 rounded-xl overflow-hidden shadow min-h-[300px]">
+        <MarkedMap
+          client:only="react"
+          positions={[officeLocation]}
+          className="h-[300px]"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Seasonal Decorations (client-side only, date-dependent) -->
+  <SeasonalDecorations client:only="react" />
 
   <Footer slot="footer" />
 </BaseLayout>
