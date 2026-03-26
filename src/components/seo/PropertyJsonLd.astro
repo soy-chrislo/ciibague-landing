@@ -1,0 +1,59 @@
+---
+import type { Property } from '../../types';
+
+interface Props {
+  property: Property;
+}
+
+const { property } = Astro.props;
+const typeLabel = property.propertyType
+  ? property.propertyType.charAt(0).toUpperCase() + property.propertyType.slice(1)
+  : 'Inmueble';
+const transactionLabel =
+  property.type === 'rent' ? 'Arriendo' : property.type === 'sale' ? 'Venta' : 'Arriendo Diario';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'RealEstateListing',
+  name: `${typeLabel} en ${property.address}`,
+  description:
+    property.description ||
+    `${typeLabel} en ${transactionLabel} en ${property.neighborhood}, Ibagué`,
+  url: Astro.url.href,
+  image: property.photos?.[0] || undefined,
+  offers: {
+    '@type': 'Offer',
+    price: property.price,
+    priceCurrency: 'COP',
+    businessFunction:
+      property.type === 'sale'
+        ? 'http://purl.org/goodrelations/v1#Sell'
+        : 'http://purl.org/goodrelations/v1#LeaseOut',
+  },
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: property.address,
+    addressLocality: 'Ibagué',
+    addressRegion: 'Tolima',
+    addressCountry: 'CO',
+  },
+  ...(property.lat && property.lng
+    ? {
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: property.lat,
+          longitude: property.lng,
+        },
+      }
+    : {}),
+  numberOfRooms: property.bedrooms,
+  numberOfBathroomsTotal: property.bathrooms,
+  floorSize: {
+    '@type': 'QuantitativeValue',
+    value: property.area,
+    unitCode: 'MTK',
+  },
+};
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />

@@ -1,0 +1,77 @@
+---
+export const prerender = false;
+
+import Footer from '../../components/Footer.astro';
+import PropertyCard from '../../components/PropertyCard.astro';
+import MarkedMap from '../../islands/MarkedMap';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { fetchApi } from '../../lib/api';
+import type { PaginatedPropertiesResponse, Property } from '../../types';
+
+const { type } = Astro.params;
+if (type !== 'sale' && type !== 'rent') return Astro.redirect('/404');
+
+const title = type === 'sale' ? 'Propiedades en Venta' : 'Propiedades en Arriendo';
+let properties: Property[] = [];
+
+try {
+  const data = await fetchApi<PaginatedPropertiesResponse>(`/properties?type=${type}&limit=100`);
+  properties = data.items || [];
+} catch (e) {
+  console.error('Error:', e);
+}
+
+const locations = properties
+  .filter((p) => p.lat && p.lng)
+  .map((p) => ({
+    id: p.id,
+    position: [p.lat!, p.lng!] as [number, number],
+    photo: p.photos?.[0] || undefined,
+    price: String(p.price),
+    label: type === 'sale' ? 'Venta' : 'Arriendo',
+  }));
+
+const positions = locations.map((l) => l.position);
+---
+
+<BaseLayout title={title}>
+  <header
+    class="flex items-center justify-between px-4 py-2 border-b border-gray-200"
+    slot="navbar"
+  >
+    <a href="/" class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-orange-500">
+      ← Inicio
+    </a>
+    <a href="/" class="font-bold text-lg">Contacto Inmobiliario</a>
+    <span class="text-sm font-medium text-gray-700">{title}</span>
+  </header>
+
+  {
+    positions.length > 0 && (
+      <MarkedMap client:only="react" locations={locations} positions={positions} className="h-[550px]" />
+    )
+  }
+
+  <section class="max-w-7xl mx-auto px-4 py-8">
+    <h2 class="text-2xl font-bold mb-4">{title}</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {
+        properties.map((p) => (
+          <PropertyCard
+            propertyId={p.id}
+            imageSrc={p.photos?.[0]}
+            price={String(p.price)}
+            address={p.address}
+            rooms={p.bedrooms}
+            bathrooms={p.bathrooms}
+            parkingLots={p.parkingSpots}
+            availability={p.available}
+            propertyType={p.propertyType}
+          />
+        ))
+      }
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>

@@ -1,0 +1,112 @@
+---
+export const prerender = false;
+
+import Footer from '../../components/Footer.astro';
+import PropertyCard from '../../components/PropertyCard.astro';
+import PropertyJsonLd from '../../components/seo/PropertyJsonLd.astro';
+import PropertyView from '../../islands/PropertyView';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { fetchApi } from '../../lib/api';
+import type { PaginatedPropertiesResponse, Property } from '../../types';
+
+const { id } = Astro.params;
+
+let property: Property | null = null;
+let rentProperties: Property[] = [];
+let saleProperties: Property[] = [];
+
+try {
+  const [propData, rentData, saleData] = await Promise.all([
+    fetchApi<Property>(`/properties/${id}`),
+    fetchApi<PaginatedPropertiesResponse>('/properties?type=rent&limit=10'),
+    fetchApi<PaginatedPropertiesResponse>('/properties?type=sale&limit=10'),
+  ]);
+  property = propData;
+  rentProperties = rentData.items || [];
+  saleProperties = saleData.items || [];
+} catch (e) {
+  console.error('Error:', e);
+  return Astro.redirect('/404');
+}
+
+if (!property) return Astro.redirect('/404');
+
+const typeLabel = property.propertyType
+  ? property.propertyType.charAt(0).toUpperCase() + property.propertyType.slice(1)
+  : 'Inmueble';
+const description = property.description || `${typeLabel} en ${property.address}, Ibagué`;
+---
+
+<BaseLayout title={property.address} description={description} ogImage={property.photos?.[0]}>
+  <PropertyJsonLd property={property} slot="head" />
+
+  <header
+    class="flex items-center justify-between px-4 py-2 border-b border-gray-200"
+    slot="navbar"
+  >
+    <a
+      href="/"
+      class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-orange-500 transition-colors"
+    >
+      ← Inicio
+    </a>
+    <a href="/" class="font-bold text-lg">Contacto Inmobiliario</a>
+    <span class="w-[50px]"></span>
+  </header>
+
+  <PropertyView client:only="react" property={property} />
+
+  {
+    rentProperties.filter((p) => p.id !== id).length > 0 && (
+      <section class="max-w-7xl mx-auto px-4 py-8">
+        <h2 class="text-2xl font-bold mb-4">Inmuebles en Arriendo</h2>
+        <div class="flex gap-4 overflow-x-auto pb-4">
+          {rentProperties
+            .filter((p) => p.id !== id)
+            .slice(0, 6)
+            .map((p) => (
+              <PropertyCard
+                propertyId={p.id}
+                imageSrc={p.photos?.[0]}
+                price={String(p.price)}
+                address={p.address}
+                rooms={p.bedrooms}
+                bathrooms={p.bathrooms}
+                parkingLots={p.parkingSpots}
+                availability={p.available}
+                propertyType={p.propertyType}
+              />
+            ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    saleProperties.filter((p) => p.id !== id).length > 0 && (
+      <section class="max-w-7xl mx-auto px-4 py-8">
+        <h2 class="text-2xl font-bold mb-4">Inmuebles en Venta</h2>
+        <div class="flex gap-4 overflow-x-auto pb-4">
+          {saleProperties
+            .filter((p) => p.id !== id)
+            .slice(0, 6)
+            .map((p) => (
+              <PropertyCard
+                propertyId={p.id}
+                imageSrc={p.photos?.[0]}
+                price={String(p.price)}
+                address={p.address}
+                rooms={p.bedrooms}
+                bathrooms={p.bathrooms}
+                parkingLots={p.parkingSpots}
+                availability={p.available}
+                propertyType={p.propertyType}
+              />
+            ))}
+        </div>
+      </section>
+    )
+  }
+
+  <Footer slot="footer" />
+</BaseLayout>
