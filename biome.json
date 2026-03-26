@@ -32,6 +32,32 @@
     {
       "includes": ["**/*.css"],
       "linter": { "rules": { "suspicious": { "noUnknownAtRules": "off" } } }
+    },
+    {
+      "includes": ["**/*.astro"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedVariables": "off",
+            "noUnusedImports": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/islands/**/*.tsx"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "useSemanticElements": "warn",
+            "noStaticElementInteractions": "warn",
+            "useKeyWithClickEvents": "warn"
+          },
+          "suspicious": {
+            "noArrayIndexKey": "warn"
+          }
+        }
+      }
     }
   ]
 }

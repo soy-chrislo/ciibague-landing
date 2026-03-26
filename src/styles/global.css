@@ -83,12 +83,21 @@ body {
 }
 
 @keyframes snowflakes-fall {
-  0% { top: -10%; }
-  100% { top: 100%; }
+  0% {
+    top: -10%;
+  }
+  100% {
+    top: 100%;
+  }
 }
 @keyframes snowflakes-shake {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(80px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(80px);
+  }
 }
 
 .snowflake {
@@ -103,22 +112,58 @@ body {
   animation-iteration-count: infinite, infinite;
   animation-play-state: running, running;
 }
-.snowflake:nth-of-type(1) { left: 1%; animation-delay: 0s, 0s; }
-.snowflake:nth-of-type(2) { left: 10%; animation-delay: 1s, 1s; }
-.snowflake:nth-of-type(3) { left: 20%; animation-delay: 6s, 0.5s; }
-.snowflake:nth-of-type(4) { left: 30%; animation-delay: 4s, 2s; }
-.snowflake:nth-of-type(5) { left: 40%; animation-delay: 2s, 2s; }
-.snowflake:nth-of-type(6) { left: 50%; animation-delay: 8s, 3s; }
-.snowflake:nth-of-type(7) { left: 60%; animation-delay: 6s, 2s; }
-.snowflake:nth-of-type(8) { left: 70%; animation-delay: 2.5s, 1s; }
-.snowflake:nth-of-type(9) { left: 80%; animation-delay: 1s, 0s; }
-.snowflake:nth-of-type(10) { left: 90%; animation-delay: 3s, 1.5s; }
-.snowflake:nth-of-type(11) { left: 25%; animation-delay: 2s, 0s; }
-.snowflake:nth-of-type(12) { left: 65%; animation-delay: 4s, 2.5s; }
+.snowflake:nth-of-type(1) {
+  left: 1%;
+  animation-delay: 0s, 0s;
+}
+.snowflake:nth-of-type(2) {
+  left: 10%;
+  animation-delay: 1s, 1s;
+}
+.snowflake:nth-of-type(3) {
+  left: 20%;
+  animation-delay: 6s, 0.5s;
+}
+.snowflake:nth-of-type(4) {
+  left: 30%;
+  animation-delay: 4s, 2s;
+}
+.snowflake:nth-of-type(5) {
+  left: 40%;
+  animation-delay: 2s, 2s;
+}
+.snowflake:nth-of-type(6) {
+  left: 50%;
+  animation-delay: 8s, 3s;
+}
+.snowflake:nth-of-type(7) {
+  left: 60%;
+  animation-delay: 6s, 2s;
+}
+.snowflake:nth-of-type(8) {
+  left: 70%;
+  animation-delay: 2.5s, 1s;
+}
+.snowflake:nth-of-type(9) {
+  left: 80%;
+  animation-delay: 1s, 0s;
+}
+.snowflake:nth-of-type(10) {
+  left: 90%;
+  animation-delay: 3s, 1.5s;
+}
+.snowflake:nth-of-type(11) {
+  left: 25%;
+  animation-delay: 2s, 0s;
+}
+.snowflake:nth-of-type(12) {
+  left: 65%;
+  animation-delay: 4s, 2.5s;
+}
 
 /* San Juan music notes */
 .music-note {
-  color: #D4A017;
+  color: #d4a017;
   font-size: 1.5em;
   font-family: Arial, sans-serif;
   text-shadow: 0 0 5px rgba(212, 160, 23, 0.5);
@@ -126,12 +171,21 @@ body {
 }
 
 @keyframes notes-fall {
-  0% { top: -10%; }
-  100% { top: 100%; }
+  0% {
+    top: -10%;
+  }
+  100% {
+    top: 100%;
+  }
 }
 @keyframes notes-sway {
-  0%, 100% { transform: translateX(0) rotate(0deg); }
-  50% { transform: translateX(60px) rotate(20deg); }
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(60px) rotate(20deg);
+  }
 }
 
 .music-note {
@@ -146,22 +200,58 @@ body {
   animation-iteration-count: infinite, infinite;
   animation-play-state: running, running;
 }
-.music-note:nth-of-type(1) { left: 1%; animation-delay: 0s, 0s; }
-.music-note:nth-of-type(2) { left: 10%; animation-delay: 0.8s, 0.5s; }
-.music-note:nth-of-type(3) { left: 20%; animation-delay: 4s, 0.3s; }
-.music-note:nth-of-type(4) { left: 30%; animation-delay: 2.5s, 1s; }
-.music-note:nth-of-type(5) { left: 40%; animation-delay: 1.5s, 1.5s; }
-.music-note:nth-of-type(6) { left: 50%; animation-delay: 6s, 0.8s; }
-.music-note:nth-of-type(7) { left: 60%; animation-delay: 3.5s, 1.2s; }
-.music-note:nth-of-type(8) { left: 70%; animation-delay: 1s, 0.7s; }
-.music-note:nth-of-type(9) { left: 80%; animation-delay: 5s, 0.4s; }
-.music-note:nth-of-type(10) { left: 90%; animation-delay: 2s, 1s; }
-.music-note:nth-of-type(11) { left: 25%; animation-delay: 3s, 0.2s; }
-.music-note:nth-of-type(12) { left: 65%; animation-delay: 4.5s, 1.8s; }
+.music-note:nth-of-type(1) {
+  left: 1%;
+  animation-delay: 0s, 0s;
+}
+.music-note:nth-of-type(2) {
+  left: 10%;
+  animation-delay: 0.8s, 0.5s;
+}
+.music-note:nth-of-type(3) {
+  left: 20%;
+  animation-delay: 4s, 0.3s;
+}
+.music-note:nth-of-type(4) {
+  left: 30%;
+  animation-delay: 2.5s, 1s;
+}
+.music-note:nth-of-type(5) {
+  left: 40%;
+  animation-delay: 1.5s, 1.5s;
+}
+.music-note:nth-of-type(6) {
+  left: 50%;
+  animation-delay: 6s, 0.8s;
+}
+.music-note:nth-of-type(7) {
+  left: 60%;
+  animation-delay: 3.5s, 1.2s;
+}
+.music-note:nth-of-type(8) {
+  left: 70%;
+  animation-delay: 1s, 0.7s;
+}
+.music-note:nth-of-type(9) {
+  left: 80%;
+  animation-delay: 5s, 0.4s;
+}
+.music-note:nth-of-type(10) {
+  left: 90%;
+  animation-delay: 2s, 1s;
+}
+.music-note:nth-of-type(11) {
+  left: 25%;
+  animation-delay: 3s, 0.2s;
+}
+.music-note:nth-of-type(12) {
+  left: 65%;
+  animation-delay: 4.5s, 1.8s;
+}
 
 /* Amor y Amistad floating hearts */
 .heart-float {
-  color: #E91E63;
+  color: #e91e63;
   font-size: 1.2em;
   font-family: Arial, sans-serif;
   text-shadow: 0 0 8px rgba(233, 30, 99, 0.4);
@@ -170,12 +260,21 @@ body {
 }
 
 @keyframes hearts-rise {
-  0% { top: 110%; }
-  100% { top: -10%; }
+  0% {
+    top: 110%;
+  }
+  100% {
+    top: -10%;
+  }
 }
 @keyframes hearts-drift {
-  0%, 100% { transform: translateX(0) scale(1); }
-  50% { transform: translateX(40px) scale(1.2); }
+  0%,
+  100% {
+    transform: translateX(0) scale(1);
+  }
+  50% {
+    transform: translateX(40px) scale(1.2);
+  }
 }
 
 .heart-float {
@@ -190,15 +289,51 @@ body {
   animation-iteration-count: infinite, infinite;
   animation-play-state: running, running;
 }
-.heart-float:nth-of-type(1) { left: 1%; animation-delay: 0s, 0s; }
-.heart-float:nth-of-type(2) { left: 10%; animation-delay: 1.5s, 0.8s; }
-.heart-float:nth-of-type(3) { left: 20%; animation-delay: 5s, 0.4s; }
-.heart-float:nth-of-type(4) { left: 30%; animation-delay: 3s, 2s; }
-.heart-float:nth-of-type(5) { left: 40%; animation-delay: 2s, 1.5s; }
-.heart-float:nth-of-type(6) { left: 50%; animation-delay: 8s, 3s; }
-.heart-float:nth-of-type(7) { left: 60%; animation-delay: 6s, 1s; }
-.heart-float:nth-of-type(8) { left: 70%; animation-delay: 2.5s, 0.5s; }
-.heart-float:nth-of-type(9) { left: 80%; animation-delay: 1s, 2s; }
-.heart-float:nth-of-type(10) { left: 90%; animation-delay: 4s, 1.2s; }
-.heart-float:nth-of-type(11) { left: 25%; animation-delay: 7s, 0.3s; }
-.heart-float:nth-of-type(12) { left: 65%; animation-delay: 3.5s, 2.5s; }
+.heart-float:nth-of-type(1) {
+  left: 1%;
+  animation-delay: 0s, 0s;
+}
+.heart-float:nth-of-type(2) {
+  left: 10%;
+  animation-delay: 1.5s, 0.8s;
+}
+.heart-float:nth-of-type(3) {
+  left: 20%;
+  animation-delay: 5s, 0.4s;
+}
+.heart-float:nth-of-type(4) {
+  left: 30%;
+  animation-delay: 3s, 2s;
+}
+.heart-float:nth-of-type(5) {
+  left: 40%;
+  animation-delay: 2s, 1.5s;
+}
+.heart-float:nth-of-type(6) {
+  left: 50%;
+  animation-delay: 8s, 3s;
+}
+.heart-float:nth-of-type(7) {
+  left: 60%;
+  animation-delay: 6s, 1s;
+}
+.heart-float:nth-of-type(8) {
+  left: 70%;
+  animation-delay: 2.5s, 0.5s;
+}
+.heart-float:nth-of-type(9) {
+  left: 80%;
+  animation-delay: 1s, 2s;
+}
+.heart-float:nth-of-type(10) {
+  left: 90%;
+  animation-delay: 4s, 1.2s;
+}
+.heart-float:nth-of-type(11) {
+  left: 25%;
+  animation-delay: 7s, 0.3s;
+}
+.heart-float:nth-of-type(12) {
+  left: 65%;
+  animation-delay: 3.5s, 2.5s;
+}

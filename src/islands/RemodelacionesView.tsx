@@ -91,13 +91,7 @@ function RemodelacionCard({
   );
 }
 
-function RemodelacionModal({
-  item,
-  onClose,
-}: {
-  item: BeforeAfter;
-  onClose: () => void;
-}) {
+function RemodelacionModal({ item, onClose }: { item: BeforeAfter; onClose: () => void }) {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -113,6 +107,8 @@ function RemodelacionModal({
   }, [onClose]);
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: modal backdrop
+    // biome-ignore lint/a11y/useKeyWithClickEvents: escape handled separately
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}
@@ -190,7 +186,9 @@ export default function RemodelacionesView({ initialItems, apiUrl }: Remodelacio
         const res = await fetch(`${apiUrl}/remodelings?${params}`);
         const data = await res.json();
         const fetchedItems: BeforeAfter[] = Array.isArray(data) ? data : (data.items ?? []);
-        const fetchedNextToken: string | null = Array.isArray(data) ? null : (data.nextToken ?? null);
+        const fetchedNextToken: string | null = Array.isArray(data)
+          ? null
+          : (data.nextToken ?? null);
         setItems((prev) => [...prev, ...fetchedItems]);
         setNextToken(fetchedNextToken);
       } catch (err) {
@@ -199,7 +197,7 @@ export default function RemodelacionesView({ initialItems, apiUrl }: Remodelacio
         setLoading(false);
       }
     },
-    [apiUrl],
+    [apiUrl]
   );
 
   return (
@@ -214,11 +212,7 @@ export default function RemodelacionesView({ initialItems, apiUrl }: Remodelacio
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((item) => (
-            <RemodelacionCard
-              key={item.id ?? item.title}
-              item={item}
-              onOpen={setSelectedItem}
-            />
+            <RemodelacionCard key={item.id ?? item.title} item={item} onOpen={setSelectedItem} />
           ))}
         </div>
       )}

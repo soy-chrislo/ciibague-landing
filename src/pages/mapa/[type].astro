@@ -25,7 +25,7 @@ const locations = properties
   .filter((p) => p.lat && p.lng)
   .map((p) => ({
     id: p.id,
-    position: [p.lat!, p.lng!] as [number, number],
+    position: [p.lat as number, p.lng as number] as [number, number],
     photo: p.photos?.[0] || undefined,
     price: String(p.price),
     label: type === 'sale' ? 'Venta' : 'Arriendo',

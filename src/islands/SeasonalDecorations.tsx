@@ -106,6 +106,7 @@ export default function SeasonalDecorations() {
   return (
     <div className={config.cssClass} aria-hidden="true">
       {config.floatingElements.map((el, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: decorative elements
         <div key={`${config.key}-${el.className}-${i}`} className={el.className}>
           {el.content}
         </div>
