@@ -1,14 +1,12 @@
 name: Deploy Production
 
-# TODO: Configure Cloudflare Pages with @astrojs/cloudflare adapter, or Docker deploy
-# Currently @astrojs/node (standalone SSR) is incompatible with Cloudflare Pages.
-# Options:
-#   1. Switch to @astrojs/cloudflare adapter for Cloudflare Pages deployment
-#   2. Deploy via Docker to VPS (same pattern as staging, different compose file)
-
 on:
   push:
     branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   lint-and-typecheck:
@@ -23,29 +21,76 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
 
-  build:
-    name: Validate Production Build
+  build-and-deploy:
+    name: Build and Deploy to VPS
     runs-on: ubuntu-latest
     needs: [lint-and-typecheck]
     timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          node-version: 22
-          cache: npm
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix=sha-
 
-      - name: Build
-        run: npm run build
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            PUBLIC_BACKEND_URL=https://main-api.contactoinmobiliarioibague.com
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1
         env:
-          PUBLIC_BACKEND_URL: https://main-api.contactoinmobiliarioibague.com
-
-      - name: Build succeeded
-        run: echo "Production build validated successfully. Deployment strategy TBD."
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT }}
+          envs: GHCR_TOKEN,GITHUB_ACTOR,GITHUB_REPOSITORY
+          script: |
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+            cd /opt/ciibague-landing
+            docker compose -f docker-compose.prod.yml pull landing
+            docker compose -f docker-compose.prod.yml up -d landing
+            sleep 10
+            for i in 1 2 3; do
+              if wget -q --spider http://localhost:3019/ > /dev/null 2>&1; then
+                echo "Health check passed"
+                exit 0
+              fi
+              echo "Attempt $i failed, retrying in 10s..."
+              sleep 10
+            done
+            echo "Health check failed"
+            exit 1
