@@ -12,4 +12,8 @@ export default defineConfig({
   site: 'https://main.contactoinmobiliarioibague.com',
   adapter: node({ mode: 'standalone' }),
   integrations: [react(), tailwind({ applyBaseStyles: false }), sitemap()],
+  server: {
+    host: '0.0.0.0',
+    port: 4321,
+  },
 });
