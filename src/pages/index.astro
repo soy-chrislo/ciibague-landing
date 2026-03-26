@@ -1,4 +1,6 @@
 ---
+export const prerender = false;
+
 import Footer from '../components/Footer.astro';
 import Hero from '../components/Hero.astro';
 import OfficesCard from '../components/OfficesCard.astro';
@@ -141,8 +143,9 @@ const officeLocation: [number, number] = [4.443912384127027, -75.23470736977413]
     </div>
   </section>
 
-  <!-- Seasonal Decorations (client-side only, date-dependent) -->
+  <!-- Seasonal Decorations (disabled for now, re-enable when ready)
   <SeasonalDecorations client:only="react" />
+  -->
 
   <Footer slot="footer" />
 </BaseLayout>
