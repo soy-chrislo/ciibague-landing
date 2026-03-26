@@ -61,7 +61,9 @@ export default function PropertyView({ property }: PropertyViewProps) {
       if (btn) {
         const original = btn.innerHTML;
         btn.innerHTML = '<span class="text-green-600 text-xs font-medium">Enlace copiado!</span>';
-        setTimeout(() => { btn.innerHTML = original; }, 2000);
+        setTimeout(() => {
+          btn.innerHTML = original;
+        }, 2000);
       }
     } catch {
       // Fallback
