@@ -2,7 +2,7 @@ services:
   landing:
     image: ghcr.io/soy-chrislo/ciibague-landing:staging-latest
     ports:
-      - '3017:4321'
+      - '127.0.0.1:3060:4321'
     environment:
       PUBLIC_BACKEND_URL: https://staging-api.contactoinmobiliarioibague.com
     healthcheck:

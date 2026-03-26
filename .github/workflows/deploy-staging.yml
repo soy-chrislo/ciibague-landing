@@ -85,7 +85,7 @@ jobs:
             docker compose -f docker-compose.staging.yml up -d landing
             sleep 10
             for i in 1 2 3; do
-              if wget -q --spider http://localhost:3017/ > /dev/null 2>&1; then
+              if wget -q --spider http://localhost:3060/ > /dev/null 2>&1; then
                 echo "Landing staging health check passed!"
                 break
               fi
