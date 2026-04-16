@@ -1,4 +1,7 @@
 ---
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+
 interface Props {
   title: string;
   description?: string;
@@ -13,12 +16,10 @@ const {
   canonical,
 } = Astro.props;
 const canonicalUrl = canonical || Astro.url.href;
+const backendUrl = import.meta.env.PUBLIC_BACKEND_URL as string | undefined;
 const isStaging =
   Astro.url.hostname.startsWith('staging') ||
-  import.meta.env.PUBLIC_BACKEND_URL?.includes('staging');
-
-import { ClientRouter } from 'astro:transitions';
-import '../styles/global.css';
+  (backendUrl !== undefined && backendUrl.includes('staging'));
 ---
 
 <!doctype html>
