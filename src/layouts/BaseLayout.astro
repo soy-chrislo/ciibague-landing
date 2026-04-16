@@ -13,6 +13,9 @@ const {
   canonical,
 } = Astro.props;
 const canonicalUrl = canonical || Astro.url.href;
+const isStaging =
+  Astro.url.hostname.startsWith('staging') ||
+  import.meta.env.PUBLIC_BACKEND_URL?.includes('staging');
 
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
@@ -38,7 +41,7 @@ import '../styles/global.css';
     <meta name="twitter:title" content={`${title} | Contacto Inmobiliario`} />
     <meta name="twitter:description" content={description} />
     {ogImage && <meta name="twitter:image" content={ogImage} />}
-    {Astro.url.hostname.startsWith('staging') && <meta name="robots" content="noindex, nofollow" />}
+    {isStaging && <meta name="robots" content="noindex, nofollow" />}
     <ClientRouter />
     <slot name="head" />
   </head>
