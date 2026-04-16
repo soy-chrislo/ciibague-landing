@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react';
+import { env } from '../config/env';
 import type { Property } from '../types';
 import ImageViewer from './ImageViewer';
 
@@ -141,7 +142,7 @@ export default function PropertyView({ property }: PropertyViewProps) {
 
           {/* WhatsApp contact button */}
           <a
-            href="https://wa.me/573164601494"
+            href={`https://wa.me/${env.whatsappNumber}`}
             target="_blank"
             rel="noreferrer"
             className="block mb-6"

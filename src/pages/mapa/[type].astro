@@ -77,6 +77,11 @@ const positions = locations.map((l) => l.position);
             parkingLots={p.parkingSpots}
             availability={p.available}
             propertyType={p.propertyType}
+            area={p.area}
+            stratum={p.stratum}
+            photosCount={p.photos?.length ?? 0}
+            type={p.type}
+            neighborhoodName={p.neighborhood}
           />
         ))
       }

@@ -74,7 +74,7 @@ const canonical = `https://main.contactoinmobiliarioibague.com/property/${proper
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="rent-grid">
           {rentProperties.filter((p) => p.slug !== slug).map((p) => (
             <div class="property-item-rent hidden">
-              <PropertyCard propertyId={p.id} slug={p.slug} imageSrc={p.photos?.[0]} price={String(p.price)} address={p.address} rooms={p.bedrooms} bathrooms={p.bathrooms} parkingLots={p.parkingSpots} availability={p.available} propertyType={p.propertyType} />
+              <PropertyCard propertyId={p.id} slug={p.slug} imageSrc={p.photos?.[0]} price={String(p.price)} address={p.address} rooms={p.bedrooms} bathrooms={p.bathrooms} parkingLots={p.parkingSpots} availability={p.available} propertyType={p.propertyType} area={p.area} stratum={p.stratum} photosCount={p.photos?.length ?? 0} type={p.type} neighborhoodName={p.neighborhood} />
             </div>
           ))}
         </div>
@@ -97,7 +97,7 @@ const canonical = `https://main.contactoinmobiliarioibague.com/property/${proper
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="sale-grid">
           {saleProperties.filter((p) => p.slug !== slug).map((p) => (
             <div class="property-item-sale hidden">
-              <PropertyCard propertyId={p.id} slug={p.slug} imageSrc={p.photos?.[0]} price={String(p.price)} address={p.address} rooms={p.bedrooms} bathrooms={p.bathrooms} parkingLots={p.parkingSpots} availability={p.available} propertyType={p.propertyType} />
+              <PropertyCard propertyId={p.id} slug={p.slug} imageSrc={p.photos?.[0]} price={String(p.price)} address={p.address} rooms={p.bedrooms} bathrooms={p.bathrooms} parkingLots={p.parkingSpots} availability={p.available} propertyType={p.propertyType} area={p.area} stratum={p.stratum} photosCount={p.photos?.length ?? 0} type={p.type} neighborhoodName={p.neighborhood} />
             </div>
           ))}
         </div>

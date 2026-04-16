@@ -1,4 +1,5 @@
 ---
+import { env } from '../config/env';
 ---
 
 <div class="bg-white rounded-xl shadow-md p-6 max-w-sm w-full">
@@ -38,7 +39,7 @@
     </a>
 
     <!-- Phone -->
-    <a href="tel:+573008409769" class="flex items-start gap-3 group">
+    <a href={`tel:+${env.whatsappNumber}`} class="flex items-start gap-3 group">
       <div class="mt-0.5 p-2 bg-orange-50 rounded-lg group-hover:bg-orange-100 transition-colors" style="color: #EE6910;">
         <svg
           width="18"
@@ -92,7 +93,7 @@
 
     <!-- WhatsApp -->
     <a
-      href="https://wa.me/573008409769"
+      href={`https://wa.me/${env.whatsappNumber}`}
       target="_blank"
       rel="noopener noreferrer"
       class="flex items-start gap-3 group"

@@ -10,6 +10,11 @@ interface Props {
   parkingLots: number;
   availability: boolean;
   propertyType?: string;
+  area?: number;
+  stratum?: number;
+  photosCount?: number;
+  type?: 'rent' | 'sale' | 'daily_rent';
+  neighborhoodName?: string;
 }
 
 const PROPERTY_TYPE_LABELS: Record<string, string> = {
@@ -35,9 +40,16 @@ const {
   parkingLots,
   availability,
   propertyType,
+  area,
+  stratum,
+  photosCount,
+  type,
+  neighborhoodName,
 } = Astro.props;
 const typeLabel = propertyType ? (PROPERTY_TYPE_LABELS[propertyType] ?? propertyType) : null;
 const formattedPrice = Number(price).toLocaleString('es-CO');
+
+const priceSuffix = type === 'rent' ? '/mes' : type === 'daily_rent' ? '/día' : null;
 ---
 
 <a
@@ -69,17 +81,27 @@ const formattedPrice = Number(price).toLocaleString('es-CO');
         </span>
       )
     }
+    {
+      photosCount && photosCount > 1 && (
+        <span class="absolute bottom-2 right-2 bg-black/60 text-white text-xs font-semibold px-2 py-0.5 rounded">
+          📷 {photosCount}
+        </span>
+      )
+    }
   </div>
   <div class="p-3">
     <div class="flex justify-between items-start mb-2">
-      <h3 class="font-semibold text-lg leading-tight">${formattedPrice}</h3>
+      <h3 class="font-semibold text-lg leading-tight">
+        ${formattedPrice}
+        {priceSuffix && <span class="text-xs text-gray-500 font-normal ml-1">{priceSuffix}</span>}
+      </h3>
     </div>
 
     <!-- Stats with icons -->
-    <div class="flex items-center mb-2">
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mb-2">
       <!-- House/rooms icon -->
-      <p class="flex justify-center items-baseline mr-5">
-        <svg class="mr-2" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <p class="flex justify-center items-baseline">
+        <svg class="mr-2" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Habitaciones">
           <title>House Icon</title>
           <path
             d="M0.5 7.67892V12.237C0.5 13.1917 0.5 13.6693 0.704366 14.034C0.884122 14.3547 1.17075 14.6153 1.52356 14.7786C1.92425 14.9643 2.44905 14.9643 3.4971 14.9643H12.5029C13.5509 14.9643 14.075 14.9643 14.4757 14.7786C14.8285 14.6153 15.1161 14.3547 15.2958 14.034C15.5 13.6696 15.5 13.1928 15.5 12.24V7.67892C15.5 7.22354 15.4995 6.99572 15.4387 6.78376C15.3847 6.59599 15.2961 6.41826 15.1762 6.25767C15.0408 6.07644 14.8528 5.92616 14.4757 5.62628L9.97569 2.04663C9.27575 1.48983 8.92578 1.21157 8.53194 1.10568C8.18487 1.01238 7.81494 1.01238 7.46787 1.10568C7.07431 1.21149 6.72481 1.48949 6.02596 2.04544L1.52447 5.62628C1.14748 5.92616 0.959412 6.07644 0.824094 6.25767C0.704178 6.41826 0.614891 6.59599 0.560909 6.78376C0.5 6.99572 0.5 7.22354 0.5 7.67892Z"
@@ -91,8 +113,8 @@ const formattedPrice = Number(price).toLocaleString('es-CO');
         {rooms}
       </p>
       <!-- Bathroom icon -->
-      <p class="flex justify-center items-baseline mr-5">
-        <svg class="mr-2" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <p class="flex justify-center items-baseline">
+        <svg class="mr-2" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Baños">
           <title>Bathroom Icon</title>
           <path
             fill-rule="evenodd"
@@ -105,7 +127,7 @@ const formattedPrice = Number(price).toLocaleString('es-CO');
       </p>
       <!-- Car/parking icon -->
       <p class="flex justify-center items-baseline">
-        <svg class="mr-2" width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg class="mr-2" width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Parqueaderos">
           <title>Car Icon</title>
           <path
             d="M0.5 3.57141L2.76822 5.51558C2.91798 5.64398 3.10676 5.71427 3.30171 5.71427H12.6982C12.8932 5.71427 13.082 5.64398 13.2317 5.51558L15.5 3.57141M3.41667 8.71427H3.425M12.5833 8.71427H12.5917M4.80054 0.571411H11.1995C11.7976 0.571411 12.3498 0.901043 12.6465 1.43517L15.0608 5.78087C15.3486 6.29892 15.5 6.88521 15.5 7.48195V12.5714C15.5 13.0448 15.1269 13.4286 14.6667 13.4286H13.8333C13.3731 13.4286 13 13.0448 13 12.5714V11.7143H3V12.5714C3 13.0448 2.6269 13.4286 2.16667 13.4286H1.33333C0.8731 13.4286 0.5 13.0448 0.5 12.5714V7.48195C0.5 6.88521 0.651383 6.29892 0.939192 5.78087L3.35347 1.43517C3.6502 0.901043 4.20244 0.571411 4.80054 0.571411ZM3.83333 8.71427C3.83333 8.95092 3.64678 9.14284 3.41667 9.14284C3.18655 9.14284 3 8.95092 3 8.71427C3 8.47761 3.18655 8.2857 3.41667 8.2857C3.64678 8.2857 3.83333 8.47761 3.83333 8.71427ZM13 8.71427C13 8.95092 12.8134 9.14284 12.5833 9.14284C12.3532 9.14284 12.1667 8.95092 12.1667 8.71427C12.1667 8.47761 12.3532 8.2857 12.5833 8.2857C12.8134 8.2857 13 8.47761 13 8.71427Z"
@@ -116,6 +138,26 @@ const formattedPrice = Number(price).toLocaleString('es-CO');
         </svg>
         {parkingLots}
       </p>
+      <!-- Area m² -->
+      {
+        area && area > 0 && (
+          <p class="flex justify-center items-baseline text-sm text-gray-700" aria-label={`Área: ${area} m²`}>
+            <svg class="mr-1" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <title>Área</title>
+              <path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z" />
+            </svg>
+            {area} m²
+          </p>
+        )
+      }
+      <!-- Stratum chip -->
+      {
+        stratum && stratum > 0 && (
+          <span class="text-xs text-gray-500 bg-gray-100 rounded px-1.5 py-0.5">
+            Estrato {stratum}
+          </span>
+        )
+      }
     </div>
 
     <!-- Property Status badge matching legacy -->
@@ -130,6 +172,8 @@ const formattedPrice = Number(price).toLocaleString('es-CO');
       <p class="text-xs font-semibold">{availability ? 'Disponible' : 'No disponible'}</p>
     </div>
 
-    <p class="text-sm text-gray-500 mt-1.5 truncate">{address}</p>
+    <!-- Address / neighborhood -->
+    {neighborhoodName && <p class="text-sm font-medium mt-1.5">{neighborhoodName}</p>}
+    <p class={`text-xs text-gray-500 truncate ${neighborhoodName ? 'mt-0.5' : 'mt-1.5'}`}>{address}</p>
   </div>
 </a>
