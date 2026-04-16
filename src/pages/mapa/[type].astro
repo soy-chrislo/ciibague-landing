@@ -11,27 +11,76 @@ import type { PaginatedPropertiesResponse, Property } from '../../types';
 const { type } = Astro.params;
 if (type !== 'sale' && type !== 'rent') return Astro.redirect('/404');
 
-const title = type === 'sale' ? 'Propiedades en Venta' : 'Propiedades en Arriendo';
-let properties: Property[] = [];
+const params = Astro.url.searchParams;
+const neighborhoodId = params.get('neighborhoodId') ?? '';
+const propertyType = params.get('propertyType') ?? '';
+const priceMin = params.get('priceMin') ?? '';
+const priceMax = params.get('priceMax') ?? '';
+const bedrooms = params.get('bedrooms') ?? '';
 
+// Build query to backend
+const q = new URLSearchParams({ type, available: 'true', limit: '100' });
+if (neighborhoodId) q.set('neighborhoodId', neighborhoodId);
+if (propertyType) q.set('propertyType', propertyType);
+if (priceMin) q.set('priceMin', priceMin);
+if (priceMax) q.set('priceMax', priceMax);
+if (bedrooms) q.set('bedrooms', bedrooms);
+
+const title = type === 'sale' ? 'Propiedades en Venta' : 'Propiedades en Arriendo';
+
+let properties: Property[] = [];
 try {
-  const data = await fetchApi<PaginatedPropertiesResponse>(`/properties?type=${type}&limit=100`);
+  const data = await fetchApi<PaginatedPropertiesResponse>(`/properties?${q.toString()}`);
   properties = data.items || [];
 } catch (e) {
-  console.error('Error:', e);
+  console.error('Error fetching properties:', e);
 }
 
-const locations = properties
-  .filter((p) => p.lat && p.lng)
-  .map((p) => ({
-    id: p.id,
-    position: [p.lat as number, p.lng as number] as [number, number],
-    photo: p.photos?.[0] || undefined,
-    price: String(p.price),
-    label: type === 'sale' ? 'Venta' : 'Arriendo',
-  }));
+// Fetch neighborhoods for filter dropdown (Ibagué)
+let neighborhoods: Array<{ id: string; name: string }> = [];
+try {
+  const cities = await fetchApi<Array<{ id: string; code: string; name: string }>>('/geo/cities');
+  const ibague = cities.find((c) => c.code === '73001');
+  if (ibague) {
+    const rawNbh = await fetchApi<Array<{ id: string; name: string }>>(
+      `/geo/neighborhoods?cityId=${ibague.id}`
+    );
+    neighborhoods = rawNbh.sort((a, b) => a.name.localeCompare(b.name));
+  }
+} catch {}
 
+// Filter out properties stuck on office coords (data cleanup will fix later)
+const OFFICE_LAT = 4.4447;
+const OFFICE_LNG = -75.2424;
+const hasUsefulCoords = (p: Property) => {
+  if (p.lat == null || p.lng == null) return false;
+  const latDiff = Math.abs(p.lat - OFFICE_LAT);
+  const lngDiff = Math.abs(p.lng - OFFICE_LNG);
+  if (latDiff < 0.0005 && lngDiff < 0.0005) return false;
+  return true;
+};
+const mapProperties = properties.filter(hasUsefulCoords);
+const locations = mapProperties.map((p) => ({
+  id: p.id,
+  position: [p.lat as number, p.lng as number] as [number, number],
+  photo: p.photos?.[0] || undefined,
+  price: String(p.price),
+  label: type === 'sale' ? 'Venta' : 'Arriendo',
+}));
 const positions = locations.map((l) => l.position);
+
+const propertyTypes = [
+  'apartamento',
+  'casa',
+  'lote',
+  'oficina',
+  'local',
+  'bodega',
+  'finca',
+  'negocio',
+  'habitacion',
+  'edificio',
+];
 ---
 
 <BaseLayout title={title}>
@@ -61,31 +110,108 @@ const positions = locations.map((l) => l.position);
     )
   }
 
+  <!-- SSR filter form -->
+  <form method="GET" class="max-w-7xl mx-auto px-4 mt-4 flex flex-wrap gap-3 items-end">
+    <div class="flex-1 min-w-[180px]">
+      <label class="text-xs text-gray-600 block mb-1">Barrio</label>
+      <select name="neighborhoodId" class="w-full border rounded px-2 py-1.5 text-sm">
+        <option value="">Cualquiera</option>
+        {
+          neighborhoods.map((n) => (
+            <option value={n.id} selected={n.id === neighborhoodId}>
+              {n.name}
+            </option>
+          ))
+        }
+      </select>
+    </div>
+    <div class="flex-1 min-w-[140px]">
+      <label class="text-xs text-gray-600 block mb-1">Tipo</label>
+      <select name="propertyType" class="w-full border rounded px-2 py-1.5 text-sm">
+        <option value="">Cualquiera</option>
+        {
+          propertyTypes.map((pt) => (
+            <option value={pt} selected={pt === propertyType}>
+              {pt.charAt(0).toUpperCase() + pt.slice(1)}
+            </option>
+          ))
+        }
+      </select>
+    </div>
+    <div class="w-32">
+      <label class="text-xs text-gray-600 block mb-1">Precio mín</label>
+      <input
+        type="number"
+        name="priceMin"
+        value={priceMin}
+        min="0"
+        class="w-full border rounded px-2 py-1.5 text-sm"
+      />
+    </div>
+    <div class="w-32">
+      <label class="text-xs text-gray-600 block mb-1">Precio máx</label>
+      <input
+        type="number"
+        name="priceMax"
+        value={priceMax}
+        min="0"
+        class="w-full border rounded px-2 py-1.5 text-sm"
+      />
+    </div>
+    <div class="w-24">
+      <label class="text-xs text-gray-600 block mb-1">Hab mín</label>
+      <input
+        type="number"
+        name="bedrooms"
+        value={bedrooms}
+        min="0"
+        max="10"
+        class="w-full border rounded px-2 py-1.5 text-sm"
+      />
+    </div>
+    <button
+      type="submit"
+      class="px-4 py-2 rounded font-semibold text-white text-sm"
+      style="background-color: #EE6910;"
+    >
+      Filtrar
+    </button>
+    <a href={`/mapa/${type}`} class="px-3 py-2 rounded text-sm text-gray-500 hover:text-gray-700">
+      Limpiar
+    </a>
+  </form>
+
   <section class="max-w-7xl mx-auto px-4 py-8">
     <h2 class="text-2xl font-bold mb-4">{title}</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {
-        properties.map((p) => (
-          <PropertyCard
-            propertyId={p.id}
-            slug={p.slug}
-            imageSrc={p.photos?.[0]}
-            price={String(p.price)}
-            address={p.address}
-            rooms={p.bedrooms}
-            bathrooms={p.bathrooms}
-            parkingLots={p.parkingSpots}
-            availability={p.available}
-            propertyType={p.propertyType}
-            area={p.area}
-            stratum={p.stratum}
-            photosCount={p.photos?.length ?? 0}
-            type={p.type}
-            neighborhoodName={p.neighborhood}
-          />
-        ))
-      }
-    </div>
+    {
+      properties.length === 0 ? (
+        <p class="text-gray-500 text-center py-12">
+          No hay propiedades que coincidan con los filtros.
+        </p>
+      ) : (
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {properties.map((p) => (
+            <PropertyCard
+              propertyId={p.id}
+              slug={p.slug}
+              imageSrc={p.photos?.[0]}
+              price={String(p.price)}
+              address={p.address}
+              rooms={p.bedrooms}
+              bathrooms={p.bathrooms}
+              parkingLots={p.parkingSpots}
+              availability={p.available}
+              propertyType={p.propertyType}
+              area={p.area}
+              stratum={p.stratum}
+              photosCount={p.photos?.length ?? 0}
+              type={p.type}
+              neighborhoodName={p.neighborhood}
+            />
+          ))}
+        </div>
+      )
+    }
   </section>
 
   <Footer slot="footer" />

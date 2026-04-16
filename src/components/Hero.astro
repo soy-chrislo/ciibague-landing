@@ -1,5 +1,30 @@
 ---
+import { fetchApi } from '../lib/api';
 import Navbar from './Navbar.astro';
+
+// Fetch Ibagué neighborhoods for search dropdown (SSR, cached per request)
+let neighborhoods: Array<{ id: string; name: string; communeName?: string }> = [];
+try {
+  const cities = await fetchApi<Array<{ id: string; code: string; name: string }>>('/geo/cities');
+  const ibague = cities.find((c) => c.code === '73001');
+  if (ibague) {
+    const rawNbh = await fetchApi<Array<{ id: string; name: string; communeId?: string }>>(
+      `/geo/neighborhoods?cityId=${ibague.id}`
+    );
+    const communes = await fetchApi<Array<{ id: string; number: number; name: string }>>(
+      `/geo/communes?cityId=${ibague.id}`
+    );
+    const communeMap = new Map(communes.map((c) => [c.id, c.name] as const));
+    neighborhoods = rawNbh.map((n) => ({
+      id: n.id,
+      name: n.name,
+      communeName: n.communeId ? communeMap.get(n.communeId) : undefined,
+    }));
+    neighborhoods.sort((a, b) => a.name.localeCompare(b.name));
+  }
+} catch (e) {
+  console.error('Hero: could not load neighborhoods', e);
+}
 ---
 
 <header
@@ -21,18 +46,80 @@ import Navbar from './Navbar.astro';
         Ventas · Arriendos · Remodelaciones — Más de 10 años de experiencia
       </p>
 
-      <!-- CTA Buttons -->
-      <div class="mt-6 flex flex-col sm:flex-row gap-3">
+      <!-- Search widget (SSR form, no React island) -->
+      <form
+        method="GET"
+        action="/mapa/sale"
+        class="mt-6 w-full max-w-3xl bg-white/95 backdrop-blur-sm rounded-xl p-4 grid grid-cols-1 sm:grid-cols-4 gap-3 shadow-xl"
+        id="hero-search"
+      >
+        <!-- Tipo transacción: radios segmented -->
+        <div class="sm:col-span-4 flex gap-4 text-sm font-medium text-gray-700">
+          <label class="flex items-center gap-1.5 cursor-pointer">
+            <input type="radio" name="_action" value="/mapa/sale" checked class="hero-action-radio" />
+            Venta
+          </label>
+          <label class="flex items-center gap-1.5 cursor-pointer">
+            <input type="radio" name="_action" value="/mapa/rent" class="hero-action-radio" />
+            Arriendo
+          </label>
+        </div>
+
+        <select name="propertyType" class="border rounded px-2 py-2 text-sm bg-white text-gray-700">
+          <option value="">Cualquier tipo</option>
+          <option value="apartamento">Apartamento</option>
+          <option value="casa">Casa</option>
+          <option value="lote">Lote</option>
+          <option value="oficina">Oficina</option>
+          <option value="local">Local</option>
+          <option value="bodega">Bodega</option>
+          <option value="finca">Finca</option>
+          <option value="negocio">Negocio</option>
+          <option value="habitacion">Habitación</option>
+          <option value="edificio">Edificio</option>
+        </select>
+
+        <select name="neighborhoodId" class="border rounded px-2 py-2 text-sm bg-white text-gray-700">
+          <option value="">Cualquier barrio</option>
+          {
+            neighborhoods.map((n) => (
+              <option value={n.id}>
+                {n.name}
+                {n.communeName ? ` — ${n.communeName}` : ''}
+              </option>
+            ))
+          }
+        </select>
+
+        <input
+          type="number"
+          name="priceMax"
+          placeholder="Precio máximo"
+          min="0"
+          class="border rounded px-2 py-2 text-sm bg-white text-gray-700"
+        />
+
+        <button
+          type="submit"
+          class="rounded-lg font-semibold text-white text-sm py-2 hover:opacity-90 active:scale-95 transition-all"
+          style="background-color: #EE6910;"
+        >
+          Buscar
+        </button>
+      </form>
+
+      <!-- Secondary CTAs -->
+      <div class="mt-4 flex flex-col sm:flex-row gap-3">
         <a
           href="/mapa/sale"
-          class="inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold text-white text-sm transition-all hover:opacity-90 active:scale-95"
+          class="inline-flex items-center justify-center px-5 py-2 rounded-lg font-medium text-white text-sm transition-all hover:opacity-90 active:scale-95 opacity-90"
           style="background-color: #EE6910;"
         >
           Ver inmuebles en venta
         </a>
         <a
           href="/mapa/rent"
-          class="inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold text-sm transition-all border-2 border-white text-white hover:bg-white hover:text-gray-900"
+          class="inline-flex items-center justify-center px-5 py-2 rounded-lg font-medium text-sm transition-all border border-white text-white hover:bg-white hover:text-gray-900 opacity-90"
         >
           Ver arriendos
         </a>
@@ -40,3 +127,21 @@ import Navbar from './Navbar.astro';
     </div>
   </div>
 </header>
+
+<script is:inline>
+  // Toggle form action based on radio choice (minimal inline JS, no island)
+  const form = document.getElementById('hero-search');
+  if (form) {
+    form.addEventListener('change', (e) => {
+      const target = e.target;
+      if (target instanceof HTMLInputElement && target.classList.contains('hero-action-radio')) {
+        form.setAttribute('action', target.value);
+      }
+    });
+    // Clean: remove _action name from radios before submission so it doesn't pollute query params
+    form.addEventListener('submit', () => {
+      const radios = form.querySelectorAll('.hero-action-radio');
+      radios.forEach((r) => r.removeAttribute('name'));
+    });
+  }
+</script>

@@ -16,9 +16,13 @@ let rentProperties: Property[] = [];
 let saleProperties: Property[] = [];
 
 try {
-  const rentData = await fetchApi<PaginatedPropertiesResponse>('/properties?type=rent&limit=50');
+  const rentData = await fetchApi<PaginatedPropertiesResponse>(
+    '/properties?type=rent&available=true&limit=50'
+  );
   rentProperties = rentData.items || [];
-  const saleData = await fetchApi<PaginatedPropertiesResponse>('/properties?type=sale&limit=50');
+  const saleData = await fetchApi<PaginatedPropertiesResponse>(
+    '/properties?type=sale&available=true&limit=50'
+  );
   saleProperties = saleData.items || [];
 } catch (e) {
   console.error('Error fetching properties:', e);

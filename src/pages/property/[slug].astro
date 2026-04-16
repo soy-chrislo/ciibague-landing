@@ -18,8 +18,8 @@ let saleProperties: Property[] = [];
 try {
   const [propData, rentData, saleData] = await Promise.all([
     fetchApi<Property>(`/properties/by-slug/${slug}`),
-    fetchApi<PaginatedPropertiesResponse>('/properties?type=rent&limit=10'),
-    fetchApi<PaginatedPropertiesResponse>('/properties?type=sale&limit=10'),
+    fetchApi<PaginatedPropertiesResponse>('/properties?type=rent&available=true&limit=10'),
+    fetchApi<PaginatedPropertiesResponse>('/properties?type=sale&available=true&limit=10'),
   ]);
   property = propData;
   rentProperties = rentData.items || [];
