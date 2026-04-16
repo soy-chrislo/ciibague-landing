@@ -68,6 +68,7 @@ const positions = locations.map((l) => l.position);
         properties.map((p) => (
           <PropertyCard
             propertyId={p.id}
+            slug={p.slug}
             imageSrc={p.photos?.[0]}
             price={String(p.price)}
             address={p.address}

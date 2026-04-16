@@ -58,6 +58,7 @@ const officeLocation: [number, number] = [4.443912384127027, -75.23470736977413]
           {rentProperties.slice(0, 12).map((p) => (
             <PropertyCard
               propertyId={p.id}
+              slug={p.slug}
               imageSrc={p.photos?.[0]}
               price={String(p.price)}
               address={p.address}
@@ -102,6 +103,7 @@ const officeLocation: [number, number] = [4.443912384127027, -75.23470736977413]
           {saleProperties.slice(0, 12).map((p) => (
             <PropertyCard
               propertyId={p.id}
+              slug={p.slug}
               imageSrc={p.photos?.[0]}
               price={String(p.price)}
               address={p.address}

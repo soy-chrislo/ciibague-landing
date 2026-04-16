@@ -1,6 +1,7 @@
 ---
 interface Props {
   propertyId: string;
+  slug: string;
   imageSrc?: string | null;
   price: string;
   address: string;
@@ -26,6 +27,7 @@ const PROPERTY_TYPE_LABELS: Record<string, string> = {
 
 const {
   propertyId,
+  slug,
   imageSrc,
   price,
   address,
@@ -40,7 +42,7 @@ const formattedPrice = Number(price).toLocaleString('es-CO');
 ---
 
 <a
-  href={`/property/${propertyId}`}
+  href={`/property/${slug}`}
   class="block shrink-0 w-full rounded-lg shadow-lg mb-5 bg-white hover:shadow-xl transition-shadow duration-200 no-underline text-inherit"
 >
   <div class="relative w-full h-[200px] bg-gray-100 rounded-t-lg overflow-hidden">

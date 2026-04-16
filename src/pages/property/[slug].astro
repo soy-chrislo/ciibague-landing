@@ -9,7 +9,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { fetchApi } from '../../lib/api';
 import type { PaginatedPropertiesResponse, Property } from '../../types';
 
-const { id } = Astro.params;
+const { slug } = Astro.params;
 
 let property: Property | null = null;
 let rentProperties: Property[] = [];
@@ -17,7 +17,7 @@ let saleProperties: Property[] = [];
 
 try {
   const [propData, rentData, saleData] = await Promise.all([
-    fetchApi<Property>(`/properties/${id}`),
+    fetchApi<Property>(`/properties/by-slug/${slug}`),
     fetchApi<PaginatedPropertiesResponse>('/properties?type=rent&limit=10'),
     fetchApi<PaginatedPropertiesResponse>('/properties?type=sale&limit=10'),
   ]);
@@ -35,9 +35,10 @@ const typeLabel = property.propertyType
   ? property.propertyType.charAt(0).toUpperCase() + property.propertyType.slice(1)
   : 'Inmueble';
 const description = property.description || `${typeLabel} en ${property.address}, Ibagué`;
+const canonical = `https://main.contactoinmobiliarioibague.com/property/${property.slug}`;
 ---
 
-<BaseLayout title={property.address} description={description} ogImage={property.photos?.[0]}>
+<BaseLayout title={property.address} description={description} ogImage={property.photos?.[0]} canonical={canonical}>
   <PropertyJsonLd property={property} slot="head" />
 
   <header
@@ -62,7 +63,7 @@ const description = property.description || `${typeLabel} en ${property.address}
   <PropertyView client:only="react" property={property} />
 
   {
-    rentProperties.filter((p) => p.id !== id).length > 0 && (
+    rentProperties.filter((p) => p.slug !== slug).length > 0 && (
       <section class="max-w-full mx-4 sm:mx-6 lg:mx-8 my-5">
         <div class="flex justify-between items-center mb-4">
           <h2 class="font-semibold text-lg lg:text-2xl">Inmuebles en Arriendo</h2>
@@ -71,9 +72,9 @@ const description = property.description || `${typeLabel} en ${property.address}
           </a>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="rent-grid">
-          {rentProperties.filter((p) => p.id !== id).map((p) => (
+          {rentProperties.filter((p) => p.slug !== slug).map((p) => (
             <div class="property-item-rent hidden">
-              <PropertyCard propertyId={p.id} imageSrc={p.photos?.[0]} price={String(p.price)} address={p.address} rooms={p.bedrooms} bathrooms={p.bathrooms} parkingLots={p.parkingSpots} availability={p.available} propertyType={p.propertyType} />
+              <PropertyCard propertyId={p.id} slug={p.slug} imageSrc={p.photos?.[0]} price={String(p.price)} address={p.address} rooms={p.bedrooms} bathrooms={p.bathrooms} parkingLots={p.parkingSpots} availability={p.available} propertyType={p.propertyType} />
             </div>
           ))}
         </div>
@@ -85,7 +86,7 @@ const description = property.description || `${typeLabel} en ${property.address}
   }
 
   {
-    saleProperties.filter((p) => p.id !== id).length > 0 && (
+    saleProperties.filter((p) => p.slug !== slug).length > 0 && (
       <section class="max-w-full mx-4 sm:mx-6 lg:mx-8 my-5">
         <div class="flex justify-between items-center mb-4">
           <h2 class="font-semibold text-lg lg:text-2xl">Inmuebles en Venta</h2>
@@ -94,9 +95,9 @@ const description = property.description || `${typeLabel} en ${property.address}
           </a>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="sale-grid">
-          {saleProperties.filter((p) => p.id !== id).map((p) => (
+          {saleProperties.filter((p) => p.slug !== slug).map((p) => (
             <div class="property-item-sale hidden">
-              <PropertyCard propertyId={p.id} imageSrc={p.photos?.[0]} price={String(p.price)} address={p.address} rooms={p.bedrooms} bathrooms={p.bathrooms} parkingLots={p.parkingSpots} availability={p.available} propertyType={p.propertyType} />
+              <PropertyCard propertyId={p.id} slug={p.slug} imageSrc={p.photos?.[0]} price={String(p.price)} address={p.address} rooms={p.bedrooms} bathrooms={p.bathrooms} parkingLots={p.parkingSpots} availability={p.available} propertyType={p.propertyType} />
             </div>
           ))}
         </div>

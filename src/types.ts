@@ -1,6 +1,7 @@
 // Property from NestJS backend GET /properties/:id
 export interface Property {
   id: string;
+  slug: string;
   type: 'rent' | 'sale' | 'daily_rent';
   propertyType: string;
   price: number;
