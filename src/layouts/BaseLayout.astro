@@ -18,8 +18,7 @@ const {
 const canonicalUrl = canonical || Astro.url.href;
 const backendUrl = import.meta.env.PUBLIC_BACKEND_URL as string | undefined;
 const isStaging =
-  Astro.url.hostname.startsWith('staging') ||
-  (backendUrl !== undefined && backendUrl.includes('staging'));
+  Astro.url.hostname.startsWith('staging') || (backendUrl?.includes('staging') ?? false);
 ---
 
 <!doctype html>

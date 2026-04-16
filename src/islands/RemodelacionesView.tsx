@@ -61,12 +61,10 @@ function RemodelacionCard({
   onOpen: (item: BeforeAfter) => void;
 }) {
   return (
-    <div
-      className="overflow-hidden rounded-lg border shadow hover:shadow-lg transition-shadow duration-300 cursor-pointer group bg-white"
+    <button
+      type="button"
+      className="overflow-hidden rounded-lg border shadow hover:shadow-lg transition-shadow duration-300 cursor-pointer group bg-white text-left w-full"
       onClick={() => onOpen(item)}
-      onKeyDown={(e) => e.key === 'Enter' && onOpen(item)}
-      role="button"
-      tabIndex={0}
       aria-label={`Ver transformación: ${item.title}`}
     >
       <div className="relative aspect-[4/3]">
@@ -87,7 +85,7 @@ function RemodelacionCard({
         <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
         <p className="text-sm text-gray-500 line-clamp-2">{item.description}</p>
       </div>
-    </div>
+    </button>
   );
 }
 
