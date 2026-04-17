@@ -46,67 +46,67 @@ try {
         Ventas · Arriendos · Remodelaciones — Más de 10 años de experiencia
       </p>
 
-      <!-- Search widget (SSR form, no React island) -->
-      <form
-        method="GET"
-        action="/mapa/sale"
-        class="mt-6 w-full max-w-3xl bg-white/95 backdrop-blur-sm rounded-xl p-4 grid grid-cols-1 sm:grid-cols-4 gap-3 shadow-xl"
-        id="hero-search"
-      >
-        <!-- Tipo transacción: radios segmented -->
-        <div class="sm:col-span-4 flex gap-4 text-sm font-medium text-gray-700">
-          <label class="flex items-center gap-1.5 cursor-pointer">
-            <input type="radio" name="_action" value="/mapa/sale" checked class="hero-action-radio" />
-            Venta
-          </label>
-          <label class="flex items-center gap-1.5 cursor-pointer">
-            <input type="radio" name="_action" value="/mapa/rent" class="hero-action-radio" />
-            Arriendo
-          </label>
-        </div>
-
-        <select name="propertyType" class="border rounded px-2 py-2 text-sm bg-white text-gray-700">
-          <option value="">Cualquier tipo</option>
-          <option value="apartamento">Apartamento</option>
-          <option value="casa">Casa</option>
-          <option value="lote">Lote</option>
-          <option value="oficina">Oficina</option>
-          <option value="local">Local</option>
-          <option value="bodega">Bodega</option>
-          <option value="finca">Finca</option>
-          <option value="negocio">Negocio</option>
-          <option value="habitacion">Habitación</option>
-          <option value="edificio">Edificio</option>
-        </select>
-
-        <select name="neighborhoodId" class="border rounded px-2 py-2 text-sm bg-white text-gray-700">
-          <option value="">Cualquier barrio</option>
-          {
-            neighborhoods.map((n) => (
-              <option value={n.id}>
-                {n.name}
-                {n.communeName ? ` — ${n.communeName}` : ''}
-              </option>
-            ))
-          }
-        </select>
-
-        <input
-          type="number"
-          name="priceMax"
-          placeholder="Precio máximo"
-          min="0"
-          class="border rounded px-2 py-2 text-sm bg-white text-gray-700"
-        />
-
-        <button
-          type="submit"
-          class="rounded-lg font-semibold text-white text-sm py-2 hover:opacity-90 active:scale-95 transition-all"
-          style="background-color: #EE6910;"
+      {/*
+        <form
+          method="GET"
+          action="/mapa/sale"
+          class="mt-6 w-full max-w-3xl bg-white/95 backdrop-blur-sm rounded-xl p-4 grid grid-cols-1 sm:grid-cols-4 gap-3 shadow-xl"
+          id="hero-search"
         >
-          Buscar
-        </button>
-      </form>
+          <div class="sm:col-span-4 flex gap-4 text-sm font-medium text-gray-700">
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="radio" name="_action" value="/mapa/sale" checked class="hero-action-radio" />
+              Venta
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="radio" name="_action" value="/mapa/rent" class="hero-action-radio" />
+              Arriendo
+            </label>
+          </div>
+
+          <select name="propertyType" class="border rounded px-2 py-2 text-sm bg-white text-gray-700">
+            <option value="">Cualquier tipo</option>
+            <option value="apartamento">Apartamento</option>
+            <option value="casa">Casa</option>
+            <option value="lote">Lote</option>
+            <option value="oficina">Oficina</option>
+            <option value="local">Local</option>
+            <option value="bodega">Bodega</option>
+            <option value="finca">Finca</option>
+            <option value="negocio">Negocio</option>
+            <option value="habitacion">Habitación</option>
+            <option value="edificio">Edificio</option>
+          </select>
+
+          <select name="neighborhoodId" class="border rounded px-2 py-2 text-sm bg-white text-gray-700">
+            <option value="">Cualquier barrio</option>
+            {
+              neighborhoods.map((n) => (
+                <option value={n.id}>
+                  {n.name}
+                  {n.communeName ? ` — ${n.communeName}` : ''}
+                </option>
+              ))
+            }
+          </select>
+
+          <input
+            type="number"
+            name="priceMax"
+            placeholder="Precio máximo"
+            min="0"
+            class="border rounded px-2 py-2 text-sm bg-white text-gray-700"
+          />
+
+          <button
+            type="submit"
+            class="rounded-lg font-semibold text-white text-sm py-2 hover:opacity-90 active:scale-95 transition-all"
+            style="background-color: #EE6910;"
+          >
+            Buscar
+          </button>
+        </form>
+      */}
 
       <!-- Secondary CTAs -->
       <div class="mt-4 flex flex-col sm:flex-row gap-3">
