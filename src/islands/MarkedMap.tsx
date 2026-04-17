@@ -34,8 +34,8 @@ export default function MarkedMap({ positions, className, style, locations }: Ma
     <div className={`w-full overflow-hidden ${className || ''}`} style={style}>
       <MapContainer className={`w-full h-[250px] ${className || ''}`} center={center} zoom={14}>
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
         {locations
           ? locations.map((location) => (
