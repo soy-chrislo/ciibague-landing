@@ -13,7 +13,6 @@
 - Preserve route/content behavior unless the PR explicitly changes it.
 
 ## Expected checks for touched areas
-- Run type checks/build for modified pages/components.
+- Run `npm run build` for production build validation, `npm run typecheck` for type checks, and `npm run lint` for linting.
 - Validate responsive behavior and critical user flows for property browsing.
 - Keep metadata, canonical/SEO-related output, and sitemap behavior consistent.
-
